@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NPS Survey Creator</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    #surveyForm {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      #surveyForm {
+        margin: 20px;
+        padding: 15px;
+      }
+
+      input[type="text"], textarea {
+        margin-bottom: 12px;
+      }
+
+      button {
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="surveyForm">
+  <h2>NPS Survey Creator</h2>
+  <form id="form">
+    <label for="question">Survey Question:</label>
+    <textarea id="question" name="question" rows="4" placeholder="Enter your NPS survey question..."></textarea>
+
+    <label for="interval">Survey Interval (in days):</label>
+    <input type="text" id="interval" name="interval" placeholder="Enter survey interval...">
+
+    <label for="audience">Target Audience:</label>
+    <input type="text" id="audience" name="audience" placeholder="Enter target audience...">
+
+    <button type="button" onclick="submitSurvey()">Create Survey</button>
+    
+    <!-- New button for survey scheduling -->
+    <button type="button" onclick="scheduleSurvey()">Schedule Survey</button>
+  </form>
+</div>
+
+<script>
+  async function submitSurvey() {
+      try {
+          const formData = {
+              question: document.getElementById('question').value,
+              interval: document.getElementById('interval').value,
+              audience: document.getElementById('audience').value
+          };
+
+          console.log('Submitted Survey:', formData);
+
+          const response = await fetch('/submitSurvey', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(formData),
+          });
+
+          if (response.ok) {
+              const data = await response.json();
+              if (data.success) {
+                  console.log('Survey submitted successfully:', data.message);
+                  alert('Survey submitted successfully!');
+              } else {
+                  console.error('Error submitting survey:', data.error);
+                  alert('Error submitting survey: ' + data.error);
+              }
+          } else {
+              console.error('Error submitting survey:', response.status);
+              alert('Error submitting survey. Please try again later.');
+          }
+      } catch (error) {
+          console.error('Error submitting survey:', error);
+          alert('Error submitting survey. Please try again later.');
+      }
+  }
+
+  async function scheduleSurvey() {
+      try {
+          const surveyData = {
+              question: document.getElementById('question').value,
+              interval: document.getElementById('interval').value,
+              audience: document.getElementById('audience').value
+          };
+
+          const response = await fetch('/scheduleSurvey', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(surveyData),
+          });
+
+          if (response.ok) {
+              const data = await response.json();
+              if (data.success) {
+                  console.log('Survey scheduled successfully:', data.message);
+                  alert('Survey scheduled successfully!');
+              } else {
+                  console.error('Error scheduling survey:', data.error);
+                  alert('Error scheduling survey: ' + data.error);
+              }
+          } else {
+              console.error('Error scheduling survey:', response.status);
+              alert('Error scheduling survey. Please try again later.');
+          }
+      } catch (error) {
+          console.error('Error scheduling survey:', error);
+          alert('Error scheduling survey. Please try again later.');
+      }
+  }
+</script>
+
+
+</body>
+</html>

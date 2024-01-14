@@ -1,0 +1,19 @@
+import pyodbc
+survey_responses = [
+    'The product is great!',
+    'Customer service needs improvement.',
+    'I love the new feature.',
+    'The app is not user-friendly.',
+]
+connection_string = 'DRIVER={SQL Server};SERVER=your_db_server;DATABASE=surveyDB;UID=your_db_user;PWD=your_db_password'
+connection = pyodbc.connect(connection_string)
+cursor = connection.cursor()
+cursor.execute('CREATE TABLE IF NOT EXISTS SurveyResponses (ID INT IDENTITY(1,1) PRIMARY KEY, Response NVARCHAR(MAX))')
+for response in survey_responses:
+    cursor.execute("INSERT INTO SurveyResponses (Response) VALUES (?)", response)
+    connection.commit()
+cursor.execute("SELECT * FROM SurveyResponses")
+results = cursor.fetchall()
+for row in results:
+    print(row.Response)
+connection.close()
